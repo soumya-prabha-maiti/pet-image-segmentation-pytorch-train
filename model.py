@@ -3,7 +3,7 @@ import torch
 import torchvision.transforms.functional as TF
 from torch import nn
 
-from pet_seg_train.config import LEARNING_RATE
+from pet_seg_train.config import PetSegTrainConfig
 
 
 class DoubleConv(nn.Module):
@@ -35,36 +35,35 @@ class DoubleConv(nn.Module):
     def forward(self, x):
         return self.double_conv(x)
 
-
-# class DoubleConv(nn.Module):
-#     def __init__(self, in_channels, out_channels):
-#         super(DoubleConv, self).__init__()
-#         self.double_conv = nn.Sequential(
-#             nn.Conv2d(
-#                 in_channels,
-#                 in_channels,
-#                 kernel_size=3,
-#                 stride=1,
-#                 padding=1,
-#                 groups=in_channels,
-#                 bias=False,
-#             ),
-#             nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, bias=False),
-#             nn.BatchNorm2d(out_channels),
-#             nn.ReLU(inplace=True),
-#             nn.Conv2d(
-#                 out_channels,
-#                 out_channels,
-#                 kernel_size=3,
-#                 stride=1,
-#                 padding=1,
-#                 groups=out_channels,
-#                 bias=False,
-#             ),
-#             nn.Conv2d(out_channels, out_channels, kernel_size=1, stride=1, bias=False),
-#             nn.BatchNorm2d(out_channels),
-#             nn.ReLU(inplace=True),
-#         )
+    # class DoubleConv(nn.Module):
+    #     def __init__(self, in_channels, out_channels):
+    #         super(DoubleConv, self).__init__()
+    #         self.double_conv = nn.Sequential(
+    #             nn.Conv2d(
+    #                 in_channels,
+    #                 in_channels,
+    #                 kernel_size=3,
+    #                 stride=1,
+    #                 padding=1,
+    #                 groups=in_channels,
+    #                 bias=False,
+    #             ),
+    #             nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, bias=False),
+    #             nn.BatchNorm2d(out_channels),
+    #             nn.ReLU(inplace=True),
+    #             nn.Conv2d(
+    #                 out_channels,
+    #                 out_channels,
+    #                 kernel_size=3,
+    #                 stride=1,
+    #                 padding=1,
+    #                 groups=out_channels,
+    #                 bias=False,
+    #             ),
+    #             nn.Conv2d(out_channels, out_channels, kernel_size=1, stride=1, bias=False),
+    #             nn.BatchNorm2d(out_channels),
+    #             nn.ReLU(inplace=True),
+    #         )
 
     def forward(self, x):
         return self.double_conv(x)
@@ -131,4 +130,4 @@ class UNet(pl.LightningModule):
         return loss
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=LEARNING_RATE)
+        return torch.optim.Adam(self.parameters(), lr=PetSegTrainConfig.LEARNING_RATE)

@@ -3,7 +3,7 @@ import torchvision
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 from torchvision import transforms as T
 
-from pet_seg_train.config import BATCH_SIZE, TRAIN_VAL_SAMPLES
+from pet_seg_train.config import PetSegTrainConfig
 
 # Define the transforms
 transform = T.Compose(
@@ -15,7 +15,7 @@ transform = T.Compose(
 
 # Download the dataset
 train_val_ds = torchvision.datasets.OxfordIIITPet(
-    root="./data/torchvision_OxfordIIITPet_segmentation",  # "./data",
+    root=PetSegTrainConfig.TRAIN_VAL_DATA_PATH, #"./data/torchvision_OxfordIIITPet_segmentation",  # "./data",
     split="trainval",
     target_types="segmentation",
     transform=transform,
@@ -24,7 +24,7 @@ train_val_ds = torchvision.datasets.OxfordIIITPet(
 )
 # Randomly sample some samples
 train_val_ds = torch.utils.data.Subset(
-    train_val_ds, torch.randperm(len(train_val_ds))[:TRAIN_VAL_SAMPLES]
+    train_val_ds, torch.randperm(len(train_val_ds))[:PetSegTrainConfig.TRAIN_VAL_SAMPLES]
 )
 
 # Split the dataset into train val and test
@@ -43,7 +43,7 @@ train_ds, val_ds = torch.utils.data.random_split(
 train_dataloader = DataLoader(
     train_ds,  # The training samples.
     sampler=RandomSampler(train_ds),  # Select batches randomly
-    batch_size=BATCH_SIZE,  # Trains with this batch size.
+    batch_size=PetSegTrainConfig.BATCH_SIZE,  # Trains with this batch size.
     num_workers=3,
     persistent_workers=True,
 )
@@ -52,7 +52,7 @@ train_dataloader = DataLoader(
 val_dataloader = DataLoader(
     val_ds,  # The validation samples.
     sampler=SequentialSampler(val_ds),  # Pull out batches sequentially.
-    batch_size=BATCH_SIZE,  # Evaluate with this batch size.
+    batch_size=PetSegTrainConfig.BATCH_SIZE,  # Evaluate with this batch size.
     num_workers=3,
     persistent_workers=True,
 )
@@ -61,7 +61,7 @@ val_dataloader = DataLoader(
 # test_dataloader = DataLoader(
 #             test_ds, # The validation samples.
 #             sampler = SequentialSampler(test_ds), # Pull out batches sequentially.
-#             batch_size = BATCH_SIZE, # Evaluate with this batch size.
+#             batch_size = PetSegTrainConfig.BATCH_SIZE, # Evaluate with this batch size.
 #             num_workers=3,
 #             persistent_workers=True,
 #         )
