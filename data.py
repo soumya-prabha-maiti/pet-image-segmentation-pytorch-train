@@ -15,7 +15,7 @@ transform = T.Compose(
 
 # Download the dataset
 train_val_ds = torchvision.datasets.OxfordIIITPet(
-    root=PetSegTrainConfig.TRAIN_VAL_DATA_PATH, #"./data/torchvision_OxfordIIITPet_segmentation",  # "./data",
+    root=PetSegTrainConfig.TRAIN_VAL_DATA_PATH,
     split="trainval",
     target_types="segmentation",
     transform=transform,
@@ -33,12 +33,12 @@ train_ds, val_ds = torch.utils.data.random_split(
     [int(0.8 * len(train_val_ds)), len(train_val_ds) - int(0.8 * len(train_val_ds))],
 )
 
-# test_ds = torchvision.datasets.OxfordIIITPet(
-#     root="./test_data",
-#     split="test",
-#     target_types="segmentation",
-#     download=True,
-# )
+test_ds = torchvision.datasets.OxfordIIITPet(
+    root=PetSegTrainConfig.TEST_DATA_PATH,#"./test_data",
+    split="test",
+    target_types="segmentation",
+    download=True,
+)
 
 train_dataloader = DataLoader(
     train_ds,  # The training samples.
@@ -58,10 +58,10 @@ val_dataloader = DataLoader(
 )
 
 # For validation the order doesn't matter, so we'll just read them sequentially.
-# test_dataloader = DataLoader(
-#             test_ds, # The validation samples.
-#             sampler = SequentialSampler(test_ds), # Pull out batches sequentially.
-#             batch_size = PetSegTrainConfig.BATCH_SIZE, # Evaluate with this batch size.
-#             num_workers=3,
-#             persistent_workers=True,
-#         )
+test_dataloader = DataLoader(
+            test_ds, # The validation samples.
+            sampler = SequentialSampler(test_ds), # Pull out batches sequentially.
+            batch_size = PetSegTrainConfig.BATCH_SIZE, # Evaluate with this batch size.
+            num_workers=3,
+            persistent_workers=True,
+        )

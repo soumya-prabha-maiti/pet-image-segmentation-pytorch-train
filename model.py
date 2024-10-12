@@ -6,9 +6,9 @@ from torch import nn
 from pet_seg_train.config import PetSegTrainConfig
 
 
-class DoubleConv(nn.Module):
+class DoubleConvOriginal(nn.Module):
     def __init__(self, in_channels, out_channels):
-        super(DoubleConv, self).__init__()
+        super(DoubleConvOriginal, self).__init__()
         self.double_conv = nn.Sequential(
             nn.Conv2d(
                 in_channels,
@@ -35,47 +35,53 @@ class DoubleConv(nn.Module):
     def forward(self, x):
         return self.double_conv(x)
 
-    # class DoubleConv(nn.Module):
-    #     def __init__(self, in_channels, out_channels):
-    #         super(DoubleConv, self).__init__()
-    #         self.double_conv = nn.Sequential(
-    #             nn.Conv2d(
-    #                 in_channels,
-    #                 in_channels,
-    #                 kernel_size=3,
-    #                 stride=1,
-    #                 padding=1,
-    #                 groups=in_channels,
-    #                 bias=False,
-    #             ),
-    #             nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, bias=False),
-    #             nn.BatchNorm2d(out_channels),
-    #             nn.ReLU(inplace=True),
-    #             nn.Conv2d(
-    #                 out_channels,
-    #                 out_channels,
-    #                 kernel_size=3,
-    #                 stride=1,
-    #                 padding=1,
-    #                 groups=out_channels,
-    #                 bias=False,
-    #             ),
-    #             nn.Conv2d(out_channels, out_channels, kernel_size=1, stride=1, bias=False),
-    #             nn.BatchNorm2d(out_channels),
-    #             nn.ReLU(inplace=True),
-    #         )
+class DoubleConvDepthwiseSep(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super(DoubleConvDepthwiseSep, self).__init__()
+        self.double_conv = nn.Sequential(
+            nn.Conv2d(
+                in_channels,
+                in_channels,
+                kernel_size=3,
+                stride=1,
+                padding=1,
+                groups=in_channels,
+                bias=False,
+            ),
+            nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, bias=False),
+            nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(
+                out_channels,
+                out_channels,
+                kernel_size=3,
+                stride=1,
+                padding=1,
+                groups=out_channels,
+                bias=False,
+            ),
+            nn.Conv2d(out_channels, out_channels, kernel_size=1, stride=1, bias=False),
+            nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True),
+        )
 
     def forward(self, x):
         return self.double_conv(x)
 
 
 class UNet(pl.LightningModule):
-    def __init__(self, in_channels, out_channels, channels_list=[64, 128, 256, 512]):
+    def __init__(self, in_channels, out_channels, channels_list=[64, 128, 256, 512], depthwise_sep=False):
         super(UNet, self).__init__()
 
         self.encoder = nn.ModuleList()
         self.decoder = nn.ModuleList()
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
+
+        if depthwise_sep:
+            DoubleConv = DoubleConvDepthwiseSep
+        else :
+            DoubleConv = DoubleConvOriginal
+        
 
         # Encoder
         for channels in channels_list:
