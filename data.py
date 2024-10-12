@@ -13,6 +13,8 @@ transform = T.Compose(
     ]
 )
 
+print(f"Downloading train_val samples")
+
 # Download the dataset
 train_val_ds = torchvision.datasets.OxfordIIITPet(
     root=PetSegTrainConfig.TRAIN_VAL_DATA_PATH,
@@ -22,6 +24,9 @@ train_val_ds = torchvision.datasets.OxfordIIITPet(
     target_transform=transform,
     download=True,
 )
+
+print(f"Downloaded train_val samples")
+
 # Randomly sample some samples
 train_val_ds = torch.utils.data.Subset(
     train_val_ds, torch.randperm(len(train_val_ds))[:PetSegTrainConfig.TRAIN_VAL_SAMPLES]
@@ -33,12 +38,16 @@ train_ds, val_ds = torch.utils.data.random_split(
     [int(0.8 * len(train_val_ds)), len(train_val_ds) - int(0.8 * len(train_val_ds))],
 )
 
+print(f"Downloading test samples")
+
 test_ds = torchvision.datasets.OxfordIIITPet(
     root=PetSegTrainConfig.TEST_DATA_PATH,#"./test_data",
     split="test",
     target_types="segmentation",
     download=True,
 )
+
+print(f"Downloaded test samples")
 
 train_dataloader = DataLoader(
     train_ds,  # The training samples.
