@@ -127,13 +127,22 @@ class UNet(pl.LightningModule):
 
         return x
 
-    def training_step(self, batch, batch_idx):
-        prefix = "train"
+    def _common_step(self, batch, batch_idx, prefix):
         x, y = batch
         y_hat = self(x)
         loss = self.loss_fn(y_hat, (y * 255 - 1).long().squeeze(1))
         self.log(f"{prefix}_loss", loss.item(), prog_bar=True)
+        return y_hat, loss
+    
+    def training_step(self, batch, batch_idx):
+        y_hat, loss = self._common_step(batch, batch_idx, "train")
         return loss
+    
+    def validation_step(self, batch, batch_idx):
+        y_hat, loss = self._common_step(batch, batch_idx, "val")
+    
+    def test_step(self, batch, batch_idx):
+        y_hat, loss = self._common_step(batch, batch_idx, "test")
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=PetSegTrainConfig.LEARNING_RATE)
