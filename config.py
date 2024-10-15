@@ -9,3 +9,4 @@ class PetSegTrainConfig:
     LEARNING_RATE = 1e-3
     TRAIN_VAL_DATA_PATH = "./data/train_val"
     TEST_DATA_PATH = "./data/test"
+    DEPTHWISE_SEP = False

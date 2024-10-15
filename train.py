@@ -8,6 +8,6 @@ def train():
     trainer = pl.Trainer(
         max_epochs=PetSegTrainConfig.EPOCHS, fast_dev_run=PetSegTrainConfig.FAST_DEV_RUN
     )
-    model = UNet(3, 3)
+    model = UNet(3, 3, depthwise_sep=PetSegTrainConfig.DEPTHWISE_SEP)
 
     trainer.fit(model, train_dataloader)
