@@ -1,4 +1,4 @@
-import pytorch_lightning as pl
+import lightning as pl
 import torch
 import torchvision.transforms.functional as TF
 from torch import nn
