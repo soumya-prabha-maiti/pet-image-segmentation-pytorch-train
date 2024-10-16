@@ -1,7 +1,7 @@
 import pytorch_lightning as pl
 
 from pet_seg_train.config import PetSegTrainConfig
-from pet_seg_train.data import train_dataloader
+from pet_seg_train.data import train_dataloader, val_dataloader
 from pet_seg_train.model import UNet
 
 def train():
@@ -10,4 +10,4 @@ def train():
     )
     model = UNet(3, 3, depthwise_sep=PetSegTrainConfig.DEPTHWISE_SEP)
 
-    trainer.fit(model, train_dataloader)
+    trainer.fit(model, train_dataloaders=train_dataloader, val_dataloaders=val_dataloader)
