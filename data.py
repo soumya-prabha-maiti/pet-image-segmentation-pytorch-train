@@ -40,12 +40,16 @@ train_ds, val_ds = torch.utils.data.random_split(
 
 print(f"Downloading test samples")
 
-test_ds = torchvision.datasets.OxfordIIITPet(
-    root=PetSegTrainConfig.TEST_DATA_PATH,#"./test_data",
-    split="test",
-    target_types="segmentation",
-    download=True,
+test_ds, val_ds = torch.utils.data.random_split(
+    val_ds,
+    [int(0.5 * len(val_ds)), len(val_ds) - int(0.5 * len(val_ds))],
 )
+# test_ds = torchvision.datasets.OxfordIIITPet(
+#     root=PetSegTrainConfig.TEST_DATA_PATH,#"./test_data",
+#     split="test",
+#     target_types="segmentation",
+#     download=True,
+# )
 
 print(f"Downloaded test samples")
 
